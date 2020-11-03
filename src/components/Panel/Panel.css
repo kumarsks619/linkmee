@@ -1,0 +1,125 @@
+.panel {
+    width: 900px;
+    height: 600px;
+    border: none;
+    background-color: #efefef;
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 30px 20px 20px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel__header {
+    flex: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.panel__responsiveWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    padding: 10px;
+}
+
+.panel__header > h1 {
+    display: inline-block;
+    color: #636e72;
+}
+
+.panel__avatar {
+    width: 45px !important;
+    height: 45px !important;
+}
+
+.panel__linksConatiner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    overflow: auto;
+    border-radius: 3px;
+    scroll-behavior: smooth;
+    box-shadow: 5px 5px 5px #d2dae2 inset, -5px -5px 5px #d2dae2 inset;
+    padding: 5px;
+}
+
+.panel__footer {
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.panel__openModalBtn {
+    flex: 0.2; 
+    border-radius: 0 5px 5px 20px !important;
+}
+
+.panel__homeBtn {
+    flex: 0.8; 
+    border-radius: 5px !important;
+    color: #636e72 !important;
+    background-color: #d3d4d4 !important;
+}
+
+.panel__logoutBtn {
+    flex: 0.2;
+    border-radius: 5px 0 20px 5px !important;
+}
+
+
+@media (max-width: 500px) {
+    .panel {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .panel__header {
+        padding: 0 5px;
+    }
+
+    .panel__responsiveWrapper {
+        flex-direction: column;
+        padding: 0;
+    }
+    
+    .panel__linksConatiner {
+        margin-top: 10px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    .panel__footer {
+        flex-direction: row;
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .panel__homeBtn {
+        margin-right: 5px !important;
+        margin-left: 5px !important;
+    }
+}
+
+@media (min-width: 500px) {
+    .panel__footer {
+        margin-left: 20px;
+    }
+
+    .panel__openModalBtn {
+        border-radius: 3px 20px 3px 3px !important;
+        flex: 0.2 !important;
+    }
+
+    .panel__homeBtn {
+        flex: 0.55 !important;
+    }
+
+    .panel__logoutBtn {
+        flex: 0.2 !important;
+    }
+}

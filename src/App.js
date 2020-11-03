@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import store from './redux/store'
+import Login from './components/Login'
+import Panel from './components/Panel'
+import { setUser } from './redux/actionCreators'
+import { auth } from './config/firebase'
+
+import './App.css'
+
 
 function App() {
+
+  const [state, setState] = useState(store.getState())
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(authUser => {
+        if(authUser) {
+            store.dispatch(setUser(authUser))
+        }else {
+            store.dispatch(setUser(null))
+        }
+    })
+
+    return () => {
+        unsubscribe()
+    }
+  }, [])
+
+
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      setState(store.getState())
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      {
+        state.user ? <Panel /> : <Login />
+      }
     </div>
-  );
+  )
 }
 
-export default App;
+
+export default App
+
+

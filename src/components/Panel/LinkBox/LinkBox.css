@@ -1,0 +1,41 @@
+.linkBox {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    margin: 10px;
+    border-radius: 20px;
+    color: rgba(61, 61, 61, 0.76);
+    box-shadow: 2px 2px 5px #d2dae2, -2px -2px 5px #d2dae2, -2px 2px 5px #d2dae2, 2px -2px 5px #d2dae2;
+    background-color: #f2f2f2;
+}
+
+.linkBox__textWrapper {
+    flex: 1;
+    padding: 5px 10px;
+}
+
+.linkBox__textWrapper > a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+}
+
+.linkBox__textWrapper > a:hover {
+    text-decoration: underline;
+    color: blue;
+}
+
+.linkBox__timestamp {
+    font-size: 14px;
+    color: rgba(59, 59, 59, 0.774);
+}
+
+.linkBox__btnWrapper {
+    flex: 0;
+    display: flex;
+}
+
+.linkBox__copyBtn {
+    margin-left: auto !important;
+    color: #2ecc71 !important;
+}
