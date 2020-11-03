@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Modal, Button } from '@material-ui/core'
-import TextField from '@material-ui/core/TextField'
 import CancelIcon from '@material-ui/icons/Cancel'
+import LinkForm from './LinkForm'
+import FileForm from './FileForm'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import LinkIcon from '@material-ui/icons/Link'
+import DescriptionIcon from '@material-ui/icons/Description'
+import Paper from '@material-ui/core/Paper'
 
 import './ModalBox.css'
 
@@ -28,17 +34,22 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
+function ModalBox(props) {
 
-function ModalBox({ isOpen, setIsOpen, inputLink, setInputLink, inputDesc, setInputDesc , handleSubmit, headerText, btnText }) {
+    const { isOpen, setIsOpen, inputLink, setInputLink, inputDesc, 
+        setInputDesc, handleSubmit, headerText, btnText, progress, file, setFile, editModal } = props
 
     const classes = useStyles()
     const [modalStyle] = useState(getModalStyle)
+
+        
+    const [tab, setTab] = useState(0)
 
 
     return (
         <Modal
             open={isOpen}
-            onClose={() => setIsOpen(false)}
+            onClose={() => { setIsOpen(false); setFile(null) }}
         >
             <div style={modalStyle} className={`${classes.paper} modalBox`}>
                 <div className="modalBox__header">
@@ -47,41 +58,54 @@ function ModalBox({ isOpen, setIsOpen, inputLink, setInputLink, inputDesc, setIn
                         variant="contained"
                         color="secondary"
                         className="modalBox__closeBtn"
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => { setIsOpen(false); setFile(null) }}
                     >
                         <CancelIcon />
                     </Button>
                 </div>
-                <form 
-                    className="modalBox__form" 
-                    autoComplete="off"
-                    onSubmit={handleSubmit}
-                >
-                    <TextField 
-                        label="Link" 
-                        variant="outlined"
-                        className="modalBox__inputField"
-                        value={inputLink}
-                        onChange={(e) => setInputLink(e.target.value)} 
-                    />
 
-                    <TextField 
-                        label="Description" 
-                        variant="outlined"
-                        className="modalBox__inputField"
-                        value={inputDesc}
-                        onChange={(e) => setInputDesc(e.target.value)} 
-                    />
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className="modalBox__addNewBtn"
-                        disabled={!inputLink}
-                    >
-                        {btnText}
-                    </Button>
-                </form>
+                {
+                    !editModal && (
+                        <Paper square style={{marginBottom: '15px'}}>
+                            <Tabs
+                                value={tab}
+                                onChange={(e, newTab) => { setTab(newTab); setFile(null) }}
+                                variant="fullWidth"
+                                indicatorColor="secondary"
+                                textColor="secondary"
+                            >
+                                <Tab icon={<LinkIcon />} label="Link" />
+                                <Tab icon={<DescriptionIcon />} label="File" />
+                            </Tabs>
+                        </Paper>
+                    )
+                }
+
+
+                {
+                    !tab ? (
+                        <LinkForm 
+                            inputLink={inputLink}
+                            setInputLink={setInputLink}
+                            inputDesc={inputDesc}
+                            setInputDesc={setInputDesc}
+                            handleSubmit={handleSubmit}
+                            btnText={btnText}
+                        />
+                    ) : (
+                        <FileForm 
+                            inputDesc={inputDesc}
+                            setInputDesc={setInputDesc}
+                            handleSubmit={handleSubmit}
+                            btnText={btnText}
+                            progress={progress}
+                            file={file}
+                            setFile={setFile}
+                        />
+                    )
+                }
+
+                
             </div>
       </Modal>
     )

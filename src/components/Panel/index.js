@@ -7,7 +7,7 @@ import Crop75Icon from '@material-ui/icons/Crop75'
 import Modal from './ModalBox'
 import store from '../../redux/store'
 import { setUser, setLinks } from '../../redux/actionCreators'
-import { auth, db } from '../../config/firebase'
+import { auth, db, storage } from '../../config/firebase'
 import firebase from 'firebase'
 
 import './Panel.css'
@@ -18,6 +18,8 @@ function Panel() {
     const [isOpen, setIsOpen] = useState(false)
     const [inputLink, setInputLink] = useState('')
     const [inputDesc, setInputDesc] = useState('')
+    const [file, setFile] = useState(null)
+    const [progress, setProgress] = useState(0)
 
 
     useEffect(() => {
@@ -29,6 +31,7 @@ function Panel() {
                 store.dispatch(setLinks(snapshot.docs.map(doc => (
                     {
                         id: doc.id,
+                        isFile: doc.data().isFile,
                         link: doc.data().link,
                         desc: doc.data().desc,
                         timestamp: doc.data().timestamp
@@ -49,24 +52,73 @@ function Panel() {
     }
 
 
+    function create_UUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    }
+
+
     const handleAddNew = (e) => {
         e.preventDefault()
 
-        db.collection("users")
-            .doc(store.getState().user.email)
-            .collection("links")
-            .add({
-                link: inputLink,
-                desc: inputDesc,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        if(file) {
+            let fileName = file.name + create_UUID()
+
+            const uploadTask = storage.ref(`files/${fileName}`).put(file)
+            uploadTask.on('state_changed', (snapshot) => {
+                //progress bar function
+                const progressBarVal = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                )
+                setProgress(progressBarVal)
+            }, (error) => {
+                alert(error.message)
+            }, () => {
+                //adding entry to the database
+                storage
+                    .ref("files")
+                    .child(fileName)
+                    .getDownloadURL()
+                    .then((url) => {
+                        db.collection("users")
+                            .doc(store.getState().user.email)
+                            .collection("links")
+                            .add({
+                                isFile: true,
+                                link: url,
+                                desc: inputDesc,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            })
+                    })
+
+                setProgress(0)
+                setFile(null)
+                setInputDesc('')
+                setIsOpen(false)
             })
-            .catch((error) => alert(error.message))
+        }else {
+            db.collection("users")
+                .doc(store.getState().user.email)
+                .collection("links")
+                .add({
+                    isFile: false,
+                    link: inputLink,
+                    desc: inputDesc,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .catch((error) => alert(error.message))
 
-
-        setInputLink('')
-        setInputDesc('')
-        setIsOpen(false)
+            setInputLink('')
+            setInputDesc('')
+            setIsOpen(false)
+        }
     }
+
 
     const scrollToTop = () => {
         let element = document.getElementById("panel__linksConatiner")
@@ -88,7 +140,8 @@ function Panel() {
                             store.getState().links.map((link) => (
                                 <LinkBox 
                                     key={link.id} 
-                                    {...link} 
+                                    {...link}
+                                    setFile={setFile} 
                                 />
                             ))
                         }
@@ -134,6 +187,10 @@ function Panel() {
                 handleSubmit={handleAddNew}
                 headerText="Add New"
                 btnText="Add"
+                progress={progress}
+                file={file}
+                setFile={setFile}
+                editModal={false}
             />
         </>
     )

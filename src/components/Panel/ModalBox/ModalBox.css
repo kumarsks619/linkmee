@@ -19,19 +19,3 @@
     border-radius: 0 20px 0 0 !important;
 }
 
-.modalBox__form {
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.modalBox__inputField {
-    margin-bottom: 15px !important;
-}
-
-
-.modalBox__addNewBtn {
-    border-radius: 0 0 20px 20px !important;
-}

@@ -119,6 +119,10 @@
         flex: 0.55 !important;
     }
 
+    .panel__homeBtn .MuiSvgIcon-root {
+        transform: rotate(90deg) !important;
+    }
+
     .panel__logoutBtn {
         flex: 0.2 !important;
     }

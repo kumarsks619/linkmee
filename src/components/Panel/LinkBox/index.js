@@ -13,7 +13,7 @@ import './LinkBox.css'
 
 
 
-function LinkBox({ id, link, desc, timestamp }) {
+function LinkBox({ id, isFile, link, desc, timestamp, setFile }) {
 
     const [isOpen, setIsOpen] = useState(false)
     const [inputLink, setInputLink] = useState(link)
@@ -74,7 +74,11 @@ function LinkBox({ id, link, desc, timestamp }) {
         <>
             <div className="linkBox">
                 <div className="linkBox__textWrapper">
-                    <a href={link} target="_blank" rel="noreferrer" style={{wordWrap: "break-word"}}>
+                    <a 
+                        href={link} 
+                        target="_blank" rel="noreferrer" 
+                        style={{wordWrap: "break-word"}}
+                    >
                         {
                             link.length > 40 ? `${link.slice(0, 50)}...` : link
                         }
@@ -87,18 +91,22 @@ function LinkBox({ id, link, desc, timestamp }) {
                 
                 <div className="linkBox__btnWrapper">
                     <IconButton
-                        color="primary"
-                        onClick={() => setIsOpen(true)}
-                    >
-                        <EditIcon />
-                    </IconButton>
-
-                    <IconButton
                         color="secondary"
                         onClick={() => handleDelete(id)}
                     >
                         <DeleteIcon />
                     </IconButton>
+                    
+                    {
+                        !isFile && (
+                            <IconButton
+                                color="primary"
+                                onClick={() => setIsOpen(true)}
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        ) 
+                    }
 
                     <CopyToClipboard text={link} onCopy={() => alert("Link copied to clipboard!")}>
                         <IconButton className="linkBox__copyBtn">
@@ -118,6 +126,8 @@ function LinkBox({ id, link, desc, timestamp }) {
                 handleSubmit={handleEdit}
                 headerText="Edit"
                 btnText="Update"
+                setFile={setFile}
+                editModal={true}
             />
         </>
         
