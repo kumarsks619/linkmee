@@ -32,6 +32,7 @@ function Panel() {
                     {
                         id: doc.id,
                         isFile: doc.data().isFile,
+                        fileName: doc.data().fileName,
                         link: doc.data().link,
                         desc: doc.data().desc,
                         timestamp: doc.data().timestamp
@@ -67,7 +68,7 @@ function Panel() {
         e.preventDefault()
 
         if(file) {
-            let fileName = file.name + create_UUID()
+            let fileName = create_UUID() + "." + file?.name.split('.').pop()
 
             const uploadTask = storage.ref(`files/${fileName}`).put(file)
             uploadTask.on('state_changed', (snapshot) => {
@@ -90,6 +91,7 @@ function Panel() {
                             .collection("links")
                             .add({
                                 isFile: true,
+                                fileName,
                                 link: url,
                                 desc: inputDesc,
                                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -107,6 +109,7 @@ function Panel() {
                 .collection("links")
                 .add({
                     isFile: false,
+                    fileName: "",
                     link: inputLink,
                     desc: inputDesc,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()

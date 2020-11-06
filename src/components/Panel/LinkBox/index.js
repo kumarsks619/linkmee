@@ -3,7 +3,7 @@ import { IconButton } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import store from '../../../redux/store'
 import { editLink, deleteLink } from '../../../redux/actionCreators'
-import { db } from '../../../config/firebase'
+import { db, storage } from '../../../config/firebase'
 import ModalBox from '../ModalBox'
 import EditIcon from '@material-ui/icons/Edit'
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn'
@@ -13,7 +13,7 @@ import './LinkBox.css'
 
 
 
-function LinkBox({ id, isFile, link, desc, timestamp, setFile }) {
+function LinkBox({ id, isFile, fileName, link, desc, timestamp, setFile }) {
 
     const [isOpen, setIsOpen] = useState(false)
     const [inputLink, setInputLink] = useState(link)
@@ -21,7 +21,7 @@ function LinkBox({ id, isFile, link, desc, timestamp, setFile }) {
     const [timestampString, setTimestampString] = useState('')
 
 
-    const handleDelete = (id) => {
+    const handleDelete = (id, fileName) => {
         store.dispatch(deleteLink(id))
 
         db.collection("users")
@@ -30,6 +30,14 @@ function LinkBox({ id, isFile, link, desc, timestamp, setFile }) {
             .doc(id)
             .delete()
             .catch(error => error.message)
+
+        if(fileName) {
+            storage
+                .ref("files")
+                .child(fileName)
+                .delete()
+                .catch(error => alert(error.message))
+        }
     }
 
 
@@ -92,7 +100,7 @@ function LinkBox({ id, isFile, link, desc, timestamp, setFile }) {
                 <div className="linkBox__btnWrapper">
                     <IconButton
                         color="secondary"
-                        onClick={() => handleDelete(id)}
+                        onClick={() => handleDelete(id, fileName)}
                     >
                         <DeleteIcon />
                     </IconButton>
